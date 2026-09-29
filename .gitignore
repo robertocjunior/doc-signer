@@ -1,0 +1,36 @@
+# Binaries and executables
+doc-signer
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+bin/
+
+# Test and coverage artifacts
+*.test
+*.out
+
+# Go workspace
+go.work
+
+# Environment variables & secrets
+.env
+.env.*
+!.env.example
+
+# Local SQLite databases & data directory
+data/
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+
+# IDE and OS artifacts
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Grupo Lipetral - Auditoria de Confirmações</title>
+  <style>
+    * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    body { margin: 0; background: #f8f9fa; padding: 24px; color: #1f2328; }
+    .container { max-width: 1440px; margin: 0 auto; }
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+    h1 { font-size: 21px; font-weight: 700; margin: 0; color: #111827; }
+    .card-filter { background: #ffffff; padding: 18px; border-radius: 6px; border: 1px solid #e1dfdd; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.03); }
+    .filter-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 14px; }
+    .filter-group { display: flex; flex-direction: column; gap: 4px; }
+    .filter-group label { font-size: 12px; font-weight: 600; color: #605e5c; }
+    input { padding: 7px 10px; border: 1px solid #d0d7de; border-radius: 4px; font-size: 13px; outline: none; }
+    input:focus { border-color: #0078d4; ring: 2px solid #0078d4; }
+    .actions-bar { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; border-top: 1px solid #f3f2f1; padding-top: 12px; }
+    .btn-group { display: flex; gap: 8px; align-items: center; }
+    button, .btn { padding: 7px 14px; border-radius: 4px; font-size: 13px; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
+    .btn-primary { background: #0078d4; color: #ffffff; border: none; }
+    .btn-primary:hover { background: #106ebe; }
+    .btn-secondary { background: #ffffff; color: #323130; border: 1px solid #d0d7de; }
+    .btn-secondary:hover { background: #f3f2f1; }
+    .btn-export { background: #107c41; color: #ffffff; border: none; font-size: 12px; padding: 6px 12px; }
+    .btn-export:hover { background: #0b5a2f; }
+    table { width: 100%; border-collapse: collapse; background: #ffffff; border-radius: 6px; border: 1px solid #e1dfdd; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.03); }
+    th, td { padding: 10px 12px; text-align: left; font-size: 13px; border-bottom: 1px solid #edebe9; }
+    th { background: #f3f2f1; font-weight: 600; color: #323130; white-space: nowrap; }
+    tr:hover { background: #fdfdfd; }
+    .hash-cell { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 11px; max-width: 130px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .badge-ok { display: inline-block; padding: 2px 6px; border-radius: 3px; font-size: 11px; background: #edfbf2; color: #107c41; font-weight: 600; white-space: nowrap; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div>
+        <h1>Painel de Assinaturas e Auditoria de Leitura</h1>
+        <small style="color: #605e5c;">Admin: {{.UserEmail}} | Registos listados: <strong>{{.Count}}</strong></small>
+      </div>
+      <a href="/admin" class="btn btn-secondary">↻ Limpar Filtros</a>
+    </div>
+
+    <div class="card-filter">
+      <form method="GET" action="/admin">
+        <div class="filter-grid">
+          <div class="filter-group">
+            <label>Documento</label>
+            <input type="text" name="doc" placeholder="Ex: TESTE123" value="{{.FilterDoc}}">
+          </div>
+          <div class="filter-group">
+            <label>Colaborador / E-mail</label>
+            <input type="text" name="user" placeholder="Nome ou e-mail..." value="{{.FilterUser}}">
+          </div>
+          <div class="filter-group">
+            <label>Setor / Departamento</label>
+            <input type="text" name="dept" placeholder="Ex: Tecnologia..." value="{{.FilterDept}}">
+          </div>
+          <div class="filter-group">
+            <label>Cargo</label>
+            <input type="text" name="job" placeholder="Ex: Analista..." value="{{.FilterJob}}">
+          </div>
+          <div class="filter-group">
+            <label>Hash de Confirmação</label>
+            <input type="text" name="hash" placeholder="Código Hash..." value="{{.FilterHash}}">
+          </div>
+          <div class="filter-group">
+            <label>IP de Origem</label>
+            <input type="text" name="ip" placeholder="Ex: 192.168..." value="{{.FilterIP}}">
+          </div>
+        </div>
+
+        <div class="actions-bar">
+          <button type="submit" class="btn btn-primary">🔍 Aplicar Filtros</button>
+          
+          <div class="btn-group">
+            <span style="font-size: 12px; font-weight: 600; color: #605e5c; margin-right: 4px;">Exportar consulta:</span>
+            <a href="/admin/export?format=xlsx&{{.QueryString}}" class="btn btn-export">📥 XLSX (Excel)</a>
+            <a href="/admin/export?format=csv&{{.QueryString}}" class="btn btn-export">📥 CSV</a>
+            <a href="/admin/export?format=xml&{{.QueryString}}" class="btn btn-export">📥 XML</a>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Data / Hora</th>
+          <th>Documento</th>
+          <th>Colaborador</th>
+          <th>E-mail</th>
+          <th>Setor</th>
+          <th>Cargo</th>
+          <th>Hash ID</th>
+          <th>IP Origem</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{range .Records}}
+        <tr>
+          <td><span class="badge-ok">{{.SignedAt.Format "02/01/2006 15:04:05"}}</span></td>
+          <td><strong>{{.DocumentName}}</strong></td>
+          <td>{{.UserName}}</td>
+          <td>{{.UserEmail}}</td>
+          <td>{{if .Department}}{{.Department}}{{else}}-{{end}}</td>
+          <td>{{if .JobTitle}}{{.JobTitle}}{{else}}-{{end}}</td>
+          <td class="hash-cell" title="{{.HashID}}">{{.HashID}}</td>
+          <td><small style="color: #605e5c;">{{.IPAddress}}</small></td>
+        </tr>
+        {{else}}
+        <tr>
+          <td colspan="8" style="text-align: center; color: #605e5c; padding: 28px;">Nenhum registo encontrado para os parâmetros selecionados.</td>
+        </tr>
+        {{end}}
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>

@@ -1,0 +1,24 @@
+# Git files
+.git
+.gitignore
+
+# Environment variables & secrets
+.env
+.env.*
+
+# Local data & databases
+data/
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+
+# Compiled binaries
+doc-signer
+*.exe
+
+# IDE and OS files
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db

@@ -1,0 +1,11 @@
+services:
+  doc-signer:
+    build: .
+    container_name: doc_signer
+    restart: unless-stopped
+    ports:
+      - "8087:8080"
+    volumes:
+      - ./data:/app/data
+    env_file:
+      - .env
