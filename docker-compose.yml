@@ -1,5 +1,6 @@
 services:
   doc-signer:
+    image: ghcr.io/robertocjunior/doc-signer:latest
     build: .
     container_name: doc_signer
     restart: unless-stopped

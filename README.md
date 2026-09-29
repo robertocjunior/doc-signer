@@ -100,9 +100,29 @@ go run .
 ```
 
 ### 3. Rodando com Docker Compose
+
+Para baixar e rodar a imagem diretamente do GitHub Container Registry (GHCR):
+```bash
+docker compose pull
+docker compose up -d
+```
+
+Ou para compilar localmente:
 ```bash
 docker compose up -d --build
 ```
+
+---
+
+## 📦 CI/CD e GitHub Container Registry (GHCR)
+
+O repositório possui uma pipeline automatizada via GitHub Actions ([.github/workflows/docker-publish.yml](.github/workflows/docker-publish.yml)):
+
+- **Gatilho Inteligente**: Disparado automaticamente em commits na branch `main`.
+- **Filtro de Arquivos (`paths-ignore`)**: Ignora alterações em arquivos Markdown (`*.md`, `README.md`), documentações (`docs/**`) e arquivos de exemplo/licença para não gerar builds desnecessários.
+- **Validação de Testes**: Executa toda a suíte de testes antes de iniciar o empacotamento do container.
+- **Cache de Camadas**: Usa cache do Docker Buildx no GitHub Actions para compilações ultra-rápidas.
+- **Publicação**: Publica a imagem em `ghcr.io/robertocjunior/doc-signer:latest` e com a tag do commit (`sha-<hash>`).
 
 ---
 
@@ -112,3 +132,4 @@ Para executar toda a suíte de testes com validação de corrida de concorrênci
 ```bash
 go test -v -race ./...
 ```
+
